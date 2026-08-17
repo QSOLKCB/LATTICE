@@ -1,0 +1,8 @@
+{
+  "protocol": "qsol-lattice-reference/1",
+  "profile_id": "qsol-3x3x3-sierpinski-derived-memory/1",
+  "address": "L[2,0,1]/L[1,1,0]",
+  "content_ref": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "authority": "storage-only",
+  "note": "Historical observed evidence reference with nested structural refinement."
+}

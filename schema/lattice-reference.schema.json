@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qsol.example/schema/lattice-reference.schema.json",
+  "title": "QSOL LATTICE Reference",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "profile_id", "address", "authority"],
+  "properties": {
+    "protocol": {"const": "qsol-lattice-reference/1"},
+    "profile_id": {"const": "qsol-3x3x3-sierpinski-derived-memory/1"},
+    "address": {
+      "type": "string",
+      "pattern": "^L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}$"
+    },
+    "content_ref": {
+      "type": ["string", "null"],
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "authority": {"const": "storage-only"},
+    "note": {"type": "string", "maxLength": 2048}
+  }
+}
