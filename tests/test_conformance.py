@@ -6,6 +6,8 @@ from lattice.conformance import canonical_json_bytes, conformance_record, profil
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "conformance" / "profile-v1.json"
+MANIFEST = ROOT / "manifest.json"
+MACHINE = ROOT / "README4AI.md"
 EXPECTED = "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf"
 
 
@@ -22,6 +24,21 @@ class ConformanceTests(unittest.TestCase):
             canonical_json_bytes({"z": 2, "a": "φ", "nested": {"b": 1, "a": 0}}),
             b'{"a":"\xcf\x86","nested":{"a":0,"b":1},"z":2}',
         )
+
+    def test_manifest_runtime_exists_and_machine_contract_matches(self):
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        machine = json.loads(MACHINE.read_text(encoding="utf-8"))
+
+        runtime = ROOT / manifest["conformance_runtime"]
+        self.assertTrue(runtime.is_file(), manifest["conformance_runtime"])
+
+        for key in (
+            "profile_fingerprint",
+            "conformance_fixture",
+            "conformance_runtime",
+            "top_level_cells",
+        ):
+            self.assertEqual(machine[key], manifest[key], key)
 
     def test_fixture_has_two_27_cell_bijections(self):
         fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
