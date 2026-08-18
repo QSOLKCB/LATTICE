@@ -115,11 +115,14 @@ LATTICE_REFERENCE != CONTENT_ID
 PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY
 CONTROL_ADAPTER != CONTROL_PAYLOAD_CODEC
 ARK_RECOVERY_AUTHORITY != LATTICE_AUTHORITY
+THEOREM_ABOUT_TRAVERSAL != THEOREM_ABOUT_TRUTH
 ```
 
 "Sierpinski-derived" is a design/profile name. This repository does not claim the memory structure is a literal physical fractal, cognitive anatomy, or empirical model of the universe.
 
 ## Reference implementations
+
+### Python
 
 Python 3.11+, standard library only:
 
@@ -132,21 +135,49 @@ print(address_for_roles("response", "derived", "current"))
 print(phi_stride_cells()[:3])
 ```
 
+### JavaScript
+
 A dependency-free Node.js implementation independently regenerates the canonical conformance vector and SHA-256 profile fingerprint:
 
 ```bash
 node implementations/javascript/verify_conformance.js
 ```
 
-Validation:
+### Rust
+
+A standard-library-only Rust implementation independently regenerates the same 27-cell profile, traversal, strict recursive-address parser, canonical JSON payload, and SHA-256 fingerprint. Its emitted record is compared byte-semantically with the frozen JSON fixture:
+
+```bash
+python3 tools/verify_rust_conformance.py
+```
+
+The CI verifier pins Rust `1.96.1` rather than following a moving toolchain channel.
+
+### Lean
+
+The Lean specification proves a real protocol invariant rather than mirroring the whole codebase. `implementations/lean/Lattice.lean` proves that the fixed `17 mod 27` traversal is coprime, has length 27, contains no duplicate indices, and reduces to the exact published index order.
+
+```bash
+lean implementations/lean/Lattice.lean
+```
+
+Lean is pinned by `lean-toolchain`. See `docs/FORMAL-INVARIANTS.md` for the proof boundary.
+
+## Validation
 
 ```bash
 python3 tools/quality_gate.py
 python3 tools/validate_lattice.py
 python3 tools/validate_integrations.py
 node implementations/javascript/verify_conformance.js
+python3 tools/verify_rust_conformance.py
+lean implementations/lean/Lattice.lean
 python3 -m unittest discover -s tests -v
 ```
+
+## Roadmap status
+
+All implementation phases in `ROADMAP.md` are complete. The deferred/prohibited-by-default section remains an enduring scope boundary, not unfinished work.
 
 ## Relationship to CONTROL
 

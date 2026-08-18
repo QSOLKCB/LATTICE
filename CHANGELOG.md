@@ -17,8 +17,17 @@
 - QSOL-ARK recovery indexing manifest adapter with recovery authority retained by ARK.
 - Language-neutral consumer-adapter conformance fixture.
 - Independent dependency-free JavaScript reference implementation and CI conformance verification.
+- Standard-library-only Rust reference implementation with independent SHA-256 and conformance fixture verification.
+- Lean 4 specification proving coprimality, exact traversal length, no-duplicate traversal indices, and the canonical phi-stride order.
+- Pinned Rust and Lean toolchains in CI for the additional implementation checks.
+- Formal-invariant documentation that explicitly limits theorem claims to traversal semantics.
+
+### Completed
+
+- All implementation phases in `ROADMAP.md` are complete.
 
 ### Boundaries
 
 - Migration never silently rewrites historical `(profile_id, address)` identity.
 - Consumer adapters do not import payload codecs, evidence authority, truth scoring, distributed database semantics, or biological claims into LATTICE.
+- Formal verification of traversal properties does not create truth, physical, cognitive, or epistemic authority claims.

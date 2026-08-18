@@ -19,15 +19,32 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install pinned Rust toolchain
+        run: |
+          if ! command -v rustup >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --default-toolchain none -y --profile minimal
+            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+            export PATH="$HOME/.cargo/bin:$PATH"
+          fi
+          rustup toolchain install 1.96.1 --profile minimal
+      - name: Install pinned Lean toolchain
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://elan.lean-lang.org/elan-init.sh | sh -s -- -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+          "$HOME/.elan/bin/elan" toolchain install leanprover/lean4:v4.30.0
       - name: Compile Python
         run: python3 -m compileall -q lattice tools tests
       - name: Deterministic quality gate
         run: python3 tools/quality_gate.py
       - name: Validate core contracts
         run: python3 tools/validate_lattice.py
-      - name: Validate migration and adapters
+      - name: Validate migration, adapters, and implementation registry
         run: python3 tools/validate_integrations.py
       - name: Verify independent JavaScript conformance
         run: node implementations/javascript/verify_conformance.js
-      - name: Run tests
+      - name: Verify independent Rust conformance
+        run: python3 tools/verify_rust_conformance.py
+      - name: Verify Lean traversal invariants
+        run: lean implementations/lean/Lattice.lean
+      - name: Run Python tests
         run: python3 -m unittest discover -s tests -v

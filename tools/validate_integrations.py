@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate migration and consumer-adapter contracts against frozen fixtures."""
+"""Validate migration, adapters, and additional implementation contracts."""
 
 from __future__ import annotations
 
@@ -27,6 +27,9 @@ from lattice.migration import (
     validate_profile_descriptor,
 )
 
+EXPECTED_RUST_TOOLCHAIN = "1.96.1"
+EXPECTED_LEAN_TOOLCHAIN = "leanprover/lean4:v4.30.0"
+
 
 def load_json(relative: str) -> dict[str, Any]:
     path = ROOT / relative
@@ -39,6 +42,15 @@ def load_json(relative: str) -> dict[str, Any]:
     return value
 
 
+def require_file(relative: Any, field: str) -> Path:
+    if not isinstance(relative, str) or not relative:
+        raise LatticeValidationError(f"{field} missing or invalid")
+    path = ROOT / relative
+    if not path.is_file():
+        raise LatticeValidationError(f"{field} missing file: {relative}")
+    return path
+
+
 def validate() -> dict[str, Any]:
     manifest = load_json("manifest.json")
     contract_path = manifest.get("profile_compatibility_contract")
@@ -47,17 +59,49 @@ def validate() -> dict[str, Any]:
     consumer_fixture = manifest.get("consumer_conformance_fixture")
     javascript_runtime = manifest.get("javascript_reference")
     javascript_validator = manifest.get("javascript_conformance_command")
+    rust_runtime = manifest.get("rust_reference")
+    rust_validator = manifest.get("rust_conformance_command")
+    lean_specification = manifest.get("lean_specification")
+    lean_toolchain_file = manifest.get("lean_toolchain_file")
+    lean_validator = manifest.get("lean_verification_command")
+    formal_invariants = manifest.get("formal_invariants")
+
     for field, relative in {
         "profile_compatibility_contract": contract_path,
         "migration_schema": migration_schema,
         "migration_fixture": migration_fixture,
         "consumer_conformance_fixture": consumer_fixture,
         "javascript_reference": javascript_runtime,
+        "rust_reference": rust_runtime,
+        "lean_specification": lean_specification,
+        "lean_toolchain_file": lean_toolchain_file,
+        "formal_invariants": formal_invariants,
     }.items():
-        if not isinstance(relative, str) or not (ROOT / relative).is_file():
-            raise LatticeValidationError(f"{field} missing or invalid")
+        require_file(relative, field)
+
     if javascript_validator != "node implementations/javascript/verify_conformance.js":
         raise LatticeValidationError("javascript conformance command drift")
+    if rust_validator != "python3 tools/verify_rust_conformance.py":
+        raise LatticeValidationError("rust conformance command drift")
+    if manifest.get("rust_toolchain") != EXPECTED_RUST_TOOLCHAIN:
+        raise LatticeValidationError("rust toolchain drift")
+    if lean_validator != "lean implementations/lean/Lattice.lean":
+        raise LatticeValidationError("lean verification command drift")
+    if manifest.get("lean_toolchain") != EXPECTED_LEAN_TOOLCHAIN:
+        raise LatticeValidationError("lean toolchain drift")
+    lean_toolchain_text = require_file(lean_toolchain_file, "lean_toolchain_file").read_text(
+        encoding="utf-8"
+    ).strip()
+    if lean_toolchain_text != EXPECTED_LEAN_TOOLCHAIN:
+        raise LatticeValidationError("lean-toolchain file drift")
+
+    additional = manifest.get("additional_implementations")
+    if additional != {
+        "javascript": "conformance-reference",
+        "rust": "stdlib-only-conformance-reference",
+        "lean": "traversal-invariant-specification",
+    }:
+        raise LatticeValidationError("additional implementation registry drift")
 
     contract = load_json(contract_path)
     if contract.get("protocol") != "qsol-lattice-profile-compatibility/1":
@@ -147,6 +191,12 @@ def validate() -> dict[str, Any]:
     if qsol_ark_recovery_manifest(ark["input"]) != ark["expected"]:
         raise LatticeValidationError("QSOL-ARK adapter fixture drift")
 
+    roadmap = require_file(manifest.get("roadmap"), "roadmap").read_text(encoding="utf-8")
+    if "- [ ]" in roadmap:
+        raise LatticeValidationError("roadmap contains unfinished implementation checkbox")
+    if "All implementation phases in this roadmap are complete." not in roadmap:
+        raise LatticeValidationError("roadmap completion declaration missing")
+
     return {
         "status": "valid",
         "profile_id": PROFILE_ID,
@@ -155,6 +205,11 @@ def validate() -> dict[str, Any]:
         "migration_contract": "valid",
         "consumer_adapters": ["QSOL-CONTROL", "QSOL-CORPUS", "QSOL-ARK"],
         "javascript_reference": javascript_runtime,
+        "rust_reference": rust_runtime,
+        "rust_toolchain": EXPECTED_RUST_TOOLCHAIN,
+        "lean_specification": lean_specification,
+        "lean_toolchain": EXPECTED_LEAN_TOOLCHAIN,
+        "roadmap": "complete",
     }
 
 
