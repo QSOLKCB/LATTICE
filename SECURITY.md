@@ -11,13 +11,16 @@ Implementations must:
 - reject malformed syntax;
 - reject coordinates outside `0..2`;
 - reject empty path segments;
-- enforce the declared recursion-depth limit;
+- reject control characters, percent-encoded separators, path-traversal tokens and escape syntax;
+- enforce the declared recursion-depth and address-length limits;
 - avoid evaluating address text as code;
 - never use an unvalidated address directly as a filesystem path.
 
+The canonical bootstrap grammar has no escape mechanism. A valid segment is exactly `L[x,y,z]` with each coordinate in `0..2`. Recursive segments are separated only by a literal `/`.
+
 ## Resource bounds
 
-Recursive addresses are capped at eight segments in the bootstrap profile. Consumers may adopt stricter local limits but must not silently reinterpret longer addresses.
+Recursive addresses are capped at eight segments and 71 characters in the bootstrap profile. Parsing checks those limits before segment conversion. Consumers may adopt stricter local limits but must not silently reinterpret longer addresses.
 
 ## Authority containment
 
@@ -31,10 +34,10 @@ GEOMETRY != TRUTH
 
 ## Traversal parameters
 
-Traversal IDs and parameters are versioned protocol data. Consumers must validate the fixed stride/modulus for known profiles and fail closed when they do not match.
+Traversal IDs and parameters are versioned protocol data. Consumers must validate the fixed stride/modulus for known profiles and reject inputs when they do not match.
 
 The phi-stride traversal is not an encryption mechanism and provides no confidentiality.
 
 ## Payload boundary
 
-LATTICE does not own arbitrary payload deserialization. Consumers should store content IDs/references separately and validate their own payload formats.
+LATTICE references are structural metadata, not payload containers. The core reference contract rejects unsupported fields, including consumer-specific payload or authority-like metadata. Consumers should store content IDs/references separately and validate their own payload formats.

@@ -14,7 +14,26 @@ PHI_STRIDE = 17
 TOP_LEVEL_CELL_COUNT = 27
 MAX_RECURSIVE_DEPTH = 8
 
-ADDRESS_PATTERN = r"L\[[0-2],[0-2],[0-2]\](?:/L\[[0-2],[0-2],[0-2]\]){0,7}"
+SEGMENT_PATTERN = r"L\[[0-2],[0-2],[0-2]\]"
+CANONICAL_SEGMENT_LENGTH = len("L[0,0,0]")
+
+
+def address_pattern(max_depth: int = MAX_RECURSIVE_DEPTH) -> str:
+    """Return the canonical regex body for a bounded recursive address."""
+    if type(max_depth) is not int or not 1 <= max_depth <= MAX_RECURSIVE_DEPTH:
+        raise LatticeValidationError(f"max_depth must be 1..{MAX_RECURSIVE_DEPTH}")
+    return rf"{SEGMENT_PATTERN}(?:/{SEGMENT_PATTERN}){{0,{max_depth - 1}}}"
+
+
+def max_address_length(max_depth: int = MAX_RECURSIVE_DEPTH) -> int:
+    """Return the longest canonical address in characters for max_depth."""
+    if type(max_depth) is not int or not 1 <= max_depth <= MAX_RECURSIVE_DEPTH:
+        raise LatticeValidationError(f"max_depth must be 1..{MAX_RECURSIVE_DEPTH}")
+    return max_depth * CANONICAL_SEGMENT_LENGTH + (max_depth - 1)
+
+
+ADDRESS_PATTERN = address_pattern()
+MAX_ADDRESS_LENGTH = max_address_length()
 _ADDRESS_RE = re.compile(rf"^{ADDRESS_PATTERN}$")
 _SEGMENT_RE = re.compile(r"^L\[([0-2]),([0-2]),([0-2])\]$")
 
@@ -28,7 +47,15 @@ TEMPORAL_VALUES = {value: key for key, value in TEMPORAL_ROLES.items()}
 
 
 class LatticeError(ValueError):
-    """Raised when a LATTICE profile/address invariant is violated."""
+    """Base error for LATTICE protocol failures."""
+
+
+class LatticeParseError(LatticeError):
+    """Raised when untrusted address text violates the canonical grammar."""
+
+
+class LatticeValidationError(LatticeError):
+    """Raised when profile, traversal, or reference validation fails."""
 
 
 def lexicographic_cells() -> tuple[str, ...]:
@@ -40,31 +67,31 @@ def lexicographic_cells() -> tuple[str, ...]:
         for z in range(3)
     )
     if len(cells) != TOP_LEVEL_CELL_COUNT or len(set(cells)) != TOP_LEVEL_CELL_COUNT:
-        raise LatticeError("canonical profile must contain exactly 27 unique cells")
+        raise LatticeValidationError("canonical profile must contain exactly 27 unique cells")
     return cells
 
 
 def phi_stride_cells() -> tuple[str, ...]:
     """Return the fixed integer phi-derived traversal over all 27 cells."""
     if math.gcd(PHI_STRIDE, TOP_LEVEL_CELL_COUNT) != 1:
-        raise LatticeError("phi stride must be coprime with the cell count")
+        raise LatticeValidationError("phi stride must be coprime with the cell count")
     cells = lexicographic_cells()
     order = tuple(
         cells[(step * PHI_STRIDE) % TOP_LEVEL_CELL_COUNT]
         for step in range(TOP_LEVEL_CELL_COUNT)
     )
     if len(set(order)) != TOP_LEVEL_CELL_COUNT:
-        raise LatticeError("phi traversal must visit every cell exactly once")
+        raise LatticeValidationError("phi traversal must visit every cell exactly once")
     return order
 
 
 def traversal_cells(traversal_id: str) -> tuple[str, ...]:
-    """Resolve a known versioned traversal ID."""
+    """Resolve a known versioned traversal ID and reject unknown IDs."""
     if traversal_id == LEXICOGRAPHIC_TRAVERSAL:
         return lexicographic_cells()
     if traversal_id == PHI_STRIDE_TRAVERSAL:
         return phi_stride_cells()
-    raise LatticeError(f"unsupported traversal: {traversal_id}")
+    raise LatticeValidationError(f"unsupported traversal: {traversal_id}")
 
 
 def address_for_roles(information: str, epistemic: str, temporal: str) -> str:
@@ -74,32 +101,45 @@ def address_for_roles(information: str, epistemic: str, temporal: str) -> str:
         y = EPISTEMIC_ROLES[epistemic]
         z = TEMPORAL_ROLES[temporal]
     except KeyError as exc:
-        raise LatticeError(f"unknown lattice role: {exc.args[0]}") from exc
+        raise LatticeValidationError(f"unknown lattice role: {exc.args[0]}") from exc
     return f"L[{x},{y},{z}]"
 
 
-def parse_address(address: str, *, max_depth: int = MAX_RECURSIVE_DEPTH) -> tuple[tuple[int, int, int], ...]:
-    """Parse a bounded top-level/recursive lattice address."""
+def parse_address(
+    address: str,
+    *,
+    max_depth: int = MAX_RECURSIVE_DEPTH,
+) -> tuple[tuple[int, int, int], ...]:
+    """Parse untrusted address text using the canonical bounded grammar."""
     if not isinstance(address, str) or not address:
-        raise LatticeError("address must be a non-empty string")
-    if not isinstance(max_depth, int) or not 1 <= max_depth <= MAX_RECURSIVE_DEPTH:
-        raise LatticeError(f"max_depth must be 1..{MAX_RECURSIVE_DEPTH}")
+        raise LatticeParseError("address must be a non-empty string")
+    if type(max_depth) is not int or not 1 <= max_depth <= MAX_RECURSIVE_DEPTH:
+        raise LatticeValidationError(f"max_depth must be 1..{MAX_RECURSIVE_DEPTH}")
+    if address.count("/") + 1 > max_depth:
+        raise LatticeParseError("address exceeds recursive depth limit")
+    if len(address) > max_address_length(max_depth):
+        raise LatticeParseError("address exceeds canonical length limit")
 
-    segments = address.split("/")
-    if len(segments) > max_depth:
-        raise LatticeError("address exceeds recursive depth limit")
+    # Structural syntax has one source of truth: address_pattern(max_depth).
+    pattern = _ADDRESS_RE if max_depth == MAX_RECURSIVE_DEPTH else re.compile(
+        rf"^{address_pattern(max_depth)}$"
+    )
+    if pattern.fullmatch(address) is None:
+        if _ADDRESS_RE.fullmatch(address) is not None:
+            raise LatticeParseError("address exceeds recursive depth limit")
+        raise LatticeParseError("invalid lattice address")
 
     coordinates: list[tuple[int, int, int]] = []
-    for segment in segments:
+    for segment in address.split("/"):
         match = _SEGMENT_RE.fullmatch(segment)
         if match is None:
-            raise LatticeError(f"invalid lattice address segment: {segment!r}")
+            raise LatticeParseError("invalid lattice address")
         coordinates.append(tuple(int(part) for part in match.groups()))
     return tuple(coordinates)
 
 
 def describe_address(address: str) -> dict[str, Any]:
-    """Return inspectable role semantics for every address segment."""
+    """Return inspectable role semantics for every validated address segment."""
     parsed = parse_address(address)
     segments = []
     for depth, (x, y, z) in enumerate(parsed):
@@ -123,7 +163,7 @@ def describe_address(address: str) -> dict[str, Any]:
 
 
 def is_valid_address(address: str) -> bool:
-    """Boolean helper for callers that do not need error detail."""
+    """Return whether address satisfies the canonical bounded grammar."""
     try:
         parse_address(address)
     except LatticeError:

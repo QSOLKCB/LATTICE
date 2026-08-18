@@ -6,15 +6,16 @@
   "profile": "qsol-3x3x3-sierpinski-derived-memory/1",
   "top_level_cell_count": 27,
   "literal_geometric_claim": false,
-  "axes": {
-    "x": {"name": "information_role", "values": {"0": "question", "1": "response", "2": "evidence"}},
-    "y": {"name": "epistemic_role", "values": {"0": "observed", "1": "derived", "2": "unresolved"}},
-    "z": {"name": "temporal_role", "values": {"0": "current", "1": "historical", "2": "recovery"}}
-  },
-  "address_grammar": "L[x,y,z](\/L[x,y,z])*",
+  "address_grammar": "L[x,y,z](/L[x,y,z])*",
+  "address_pattern": "L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}",
+  "address_escaping": "none",
   "max_recursive_depth": 8,
+  "max_address_length": 71,
   "traversals": {
-    "qsol.lexicographic-27/1": {"kind": "lexicographic", "cell_count": 27},
+    "qsol.lexicographic-27/1": {
+      "kind": "lexicographic",
+      "cell_count": 27
+    },
     "qsol.phi-stride-27/1": {
       "kind": "fixed-modular-stride",
       "stride": 17,
@@ -29,6 +30,7 @@
     "STORED != TRUE",
     "MEMORY != EVIDENCE",
     "TRAVERSAL != PHYSICAL_LAW",
-    "LATTICE_REFERENCE != CONTENT_ID"
+    "LATTICE_REFERENCE != CONTENT_ID",
+    "LATTICE_REFERENCE != PAYLOAD"
   ]
 }

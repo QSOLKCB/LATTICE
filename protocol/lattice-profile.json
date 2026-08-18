@@ -4,6 +4,12 @@
   "top_level_cell_count": 27,
   "recursive": true,
   "max_recursive_depth": 8,
+  "address": {
+    "segment_pattern": "L\\[[0-2],[0-2],[0-2]\\]",
+    "pattern": "L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}",
+    "max_length": 71,
+    "escaping": "none"
+  },
   "authority": "storage-only",
   "literal_geometric_claim": false,
   "axes": {

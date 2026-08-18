@@ -10,7 +10,8 @@
     "profile_id": {"const": "qsol-3x3x3-sierpinski-derived-memory/1"},
     "address": {
       "type": "string",
-      "pattern": "^L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}$"
+      "pattern": "^L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}$",
+      "maxLength": 71
     },
     "content_ref": {
       "type": ["string", "null"],
