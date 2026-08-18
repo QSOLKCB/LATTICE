@@ -1,0 +1,11 @@
+[
+  {"name": "null-byte", "address": "L[0,0,0]\u0000"},
+  {"name": "newline", "address": "L[0,0,0]\n"},
+  {"name": "percent-encoded-separator", "address": "L[0,0,0]%2FL[1,1,1]"},
+  {"name": "path-traversal-prefix", "address": "../L[0,0,0]"},
+  {"name": "backslash-escape", "address": "L[0,0,0]\\/L[1,1,1]"},
+  {"name": "empty-segment", "address": "L[0,0,0]//L[1,1,1]"},
+  {"name": "path-traversal-segment", "address": "L[0,0,0]/../L[1,1,1]"},
+  {"name": "fullwidth-lookalike", "address": "Ｌ[0,0,0]"},
+  {"name": "extreme-length", "address": "L[0,0,0]AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"}
+]

@@ -1,0 +1,7 @@
+{
+  "protocol": "qsol-lattice-reference/1",
+  "profile_id": "qsol-3x3x3-sierpinski-derived-memory/1",
+  "address": "L[9,0,0]",
+  "content_ref": null,
+  "authority": "truth"
+}
