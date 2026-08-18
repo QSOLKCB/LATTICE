@@ -15,7 +15,7 @@
 - [x] Publish canonical ordered 27-cell fixture.
 - [x] Publish phi-stride traversal fixture.
 - [x] Publish valid/invalid/adversarial recursive-address corpus.
-- [ ] Verify the same conformance fixture from an independent non-Python implementation.
+- [x] Verify the same conformance fixture from an independent non-Python implementation.
 - [x] Define compact profile fingerprint over profile/traversal/address semantics.
 - [x] Fail CI when runtime semantics, manifest fingerprint, or fixture diverge.
 
@@ -35,24 +35,30 @@ PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY
 
 ## Phase 2 — Migration contract
 
-- [ ] Define profile compatibility rules.
-- [ ] Define migration manifest.
-- [ ] Preserve old/new address identities.
-- [ ] Test unknown-major rejection.
-- [ ] Test additive compatible metadata.
+- [x] Define profile compatibility rules.
+- [x] Define migration manifest.
+- [x] Preserve old/new address identities.
+- [x] Test unknown-major rejection.
+- [x] Test additive compatible metadata.
+
+Implemented by `protocol/profile-compatibility.json`, `schema/lattice-migration.schema.json`, `lattice/migration.py`, and migration fixtures/tests. Historical identity is the pair `(profile_id, address)`; migrations derive a target reference and retain the source reference unchanged.
 
 ## Phase 3 — Consumer adapters
 
-- [ ] QSOL-CONTROL adapter/conformance test.
-- [ ] QSOL-CORPUS address-reference adapter.
-- [ ] QSOL-ARK recovery manifest integration.
+- [x] QSOL-CONTROL adapter/conformance test.
+- [x] QSOL-CORPUS address-reference adapter.
+- [x] QSOL-ARK recovery manifest integration.
 - [x] Language-neutral JSON conformance fixture.
+
+Adapters are deliberately thin. They do not import CONTROL payload codecs, CORPUS content, or ARK recovery authority into LATTICE.
 
 ## Phase 4 — Additional implementations
 
-- [ ] JavaScript reference implementation.
+- [x] JavaScript reference implementation.
 - [ ] Rust reference implementation if useful.
 - [ ] Lean specification only if it proves a real invariant rather than decorating the repo with theorem-prover confetti.
+
+The JavaScript implementation independently regenerates and hashes the canonical conformance vector in CI. Rust is deferred until a second systems-language implementation provides a concrete deployment or assurance benefit. Lean is deferred until there is a nontrivial invariant that the existing deterministic tests and cross-language fixture do not already cover.
 
 ## Deferred / prohibited-by-default
 

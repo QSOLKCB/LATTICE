@@ -1,0 +1,31 @@
+{
+  "protocol": "qsol-lattice-profile-compatibility/1",
+  "current_profile": {
+    "protocol": "qsol-lattice-profile-descriptor/1",
+    "profile_id": "qsol-3x3x3-sierpinski-derived-memory/1",
+    "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf"
+  },
+  "rules": {
+    "unknown_major": "reject",
+    "unknown_profile_same_major": "reject",
+    "same_profile_same_fingerprint": "compatible",
+    "same_profile_changed_fingerprint": "reject-version-bump-required",
+    "additive_metadata_namespace": "metadata",
+    "additive_non_semantic_metadata": "compatible",
+    "axis_meaning_change": "new-major-required",
+    "address_grammar_change": "new-major-required",
+    "traversal_meaning_change": "new-version-required",
+    "historical_identity": "preserve-profile-id-plus-address",
+    "migration": "explicit-derived-reference-only"
+  },
+  "semantic_identity_fields": [
+    "profile_id",
+    "profile_fingerprint"
+  ],
+  "boundaries": [
+    "MIGRATION != SILENT_REWRITE",
+    "PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY",
+    "ADDRESS_IDENTITY = PROFILE_ID + ADDRESS",
+    "ADDITIVE_METADATA != SEMANTIC_REINTERPRETATION"
+  ]
+}
