@@ -15,6 +15,7 @@ PROFILE_DESCRIPTOR_PROTOCOL = "qsol-lattice-profile-descriptor/1"
 MIGRATION_PROTOCOL = "qsol-lattice-migration/1"
 MIGRATED_REFERENCE_PROTOCOL = "qsol-lattice-migrated-reference/1"
 REFERENCE_PROTOCOL = "qsol-lattice-reference/1"
+MAX_MIGRATION_MAPPINGS = 10000
 _PROFILE_VERSION_RE = re.compile(r"^(?P<family>.+)/(?P<major>[1-9][0-9]*)$")
 _SHA256_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
 
@@ -164,6 +165,8 @@ def validate_migration_manifest(value: Mapping[str, Any]) -> dict[str, Any]:
     mappings = value.get("mappings")
     if not isinstance(mappings, list):
         raise _fail("migration mappings must be an array")
+    if len(mappings) > MAX_MIGRATION_MAPPINGS:
+        raise _fail(f"migration mappings exceed limit: {MAX_MIGRATION_MAPPINGS}")
     seen_sources: set[str] = set()
     normalized: list[dict[str, str]] = []
     for row in mappings:

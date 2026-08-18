@@ -28,12 +28,27 @@ class AdapterTests(unittest.TestCase):
         with self.assertRaisesRegex(LatticeValidationError, "semantic mismatch"):
             validate_qsol_control_contract(case)
 
+    def test_qsol_control_rejects_boolean_version(self):
+        case = json.loads(json.dumps(self.fixture["qsol_control"]["input"]))
+        case["version"] = True
+        with self.assertRaisesRegex(LatticeValidationError, "version mismatch"):
+            validate_qsol_control_contract(case)
+
     def test_qsol_corpus_record_becomes_payload_free_reference(self):
         case = self.fixture["qsol_corpus"]
         actual = qsol_corpus_address_reference(case["input"], case["address"])
         self.assertEqual(actual, case["expected"])
         self.assertNotIn("payload", actual)
         self.assertEqual(actual["content_ref"], case["input"]["record_id"])
+
+    def test_qsol_corpus_rejects_non_scalar_authority_cleanly(self):
+        case = self.fixture["qsol_corpus"]
+        for malformed in ([], {}):
+            record = dict(case["input"])
+            record["authority"] = malformed
+            with self.subTest(authority=malformed):
+                with self.assertRaisesRegex(LatticeValidationError, "authority"):
+                    qsol_corpus_address_reference(record, case["address"])
 
     def test_qsol_ark_recovery_manifest_preserves_authority_boundary(self):
         case = self.fixture["qsol_ark"]
@@ -47,6 +62,14 @@ class AdapterTests(unittest.TestCase):
         entry["recovery_stage"] = "stage.99.magic"
         with self.assertRaisesRegex(LatticeValidationError, "unsupported QSOL-ARK recovery stage"):
             qsol_ark_recovery_manifest([entry])
+
+    def test_qsol_ark_rejects_non_scalar_stage_cleanly(self):
+        for malformed in ([], {}):
+            entry = dict(self.fixture["qsol_ark"]["input"][0])
+            entry["recovery_stage"] = malformed
+            with self.subTest(recovery_stage=malformed):
+                with self.assertRaisesRegex(LatticeValidationError, "recovery_stage must be a string"):
+                    qsol_ark_recovery_manifest([entry])
 
 
 if __name__ == "__main__":

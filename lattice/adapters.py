@@ -49,7 +49,8 @@ def validate_qsol_control_contract(value: Mapping[str, Any]) -> dict[str, Any]:
         raise _fail("QSOL-CONTROL lattice contract type mismatch")
     if value.get("protocol") != PROFILE_ID:
         raise _fail("QSOL-CONTROL lattice profile mismatch")
-    if value.get("version") != 1:
+    version = value.get("version")
+    if type(version) is not int or version != 1:
         raise _fail("QSOL-CONTROL lattice contract version mismatch")
     if value.get("authority") != "storage-only":
         raise _fail("QSOL-CONTROL lattice authority mismatch")
@@ -95,7 +96,10 @@ def qsol_corpus_address_reference(
     record_id = record.get("record_id")
     if not isinstance(record_id, str) or _SHA256_RE.fullmatch(record_id) is None:
         raise _fail("QSOL-CORPUS record_id must be a sha256 reference")
-    if record.get("authority") not in {None, "none"}:
+    authority = record.get("authority")
+    if authority is not None and not isinstance(authority, str):
+        raise _fail("QSOL-CORPUS authority must be absent or the string 'none'")
+    if authority not in {None, "none"}:
         raise _fail("QSOL-CORPUS adapter cannot import authority claims")
     try:
         parse_address(address)
@@ -139,6 +143,8 @@ def qsol_ark_recovery_manifest(entries: Sequence[Mapping[str, Any]]) -> dict[str
         except LatticeError as exc:
             raise _fail(str(exc)) from exc
         stage = entry.get("recovery_stage")
+        if not isinstance(stage, str):
+            raise _fail("QSOL-ARK recovery_stage must be a string")
         if stage not in _ARK_STAGES:
             raise _fail("unsupported QSOL-ARK recovery stage")
         normalized.append(

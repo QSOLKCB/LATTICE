@@ -21,10 +21,18 @@
       "required": ["protocol", "profile_id", "profile_fingerprint"],
       "properties": {
         "protocol": {"const": "qsol-lattice-profile-descriptor/1"},
-        "profile_id": {"type": "string", "pattern": "^.+/[1-9][0-9]*$"},
-        "profile_fingerprint": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "profile_id": {"type": "string"},
+        "profile_fingerprint": {"type": "string"},
         "metadata": {"type": "object"}
-      }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "profile_id": {"const": "qsol-3x3x3-sierpinski-derived-memory/1"},
+            "profile_fingerprint": {"const": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf"}
+          }
+        }
+      ]
     },
     "mapping": {
       "type": "object",

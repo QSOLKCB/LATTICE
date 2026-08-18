@@ -20,6 +20,7 @@ from lattice.adapters import (
 from lattice.conformance import profile_fingerprint
 from lattice.core import PROFILE_ID, LatticeValidationError
 from lattice.migration import (
+    MAX_MIGRATION_MAPPINGS,
     PROFILE_DESCRIPTOR_PROTOCOL,
     current_profile_descriptor,
     validate_migration_manifest,
@@ -82,6 +83,33 @@ def validate() -> dict[str, Any]:
         raise LatticeValidationError("migration schema draft mismatch")
     if schema.get("additionalProperties") is not False:
         raise LatticeValidationError("migration schema must reject additional properties")
+
+    definitions = schema.get("$defs")
+    if not isinstance(definitions, dict):
+        raise LatticeValidationError("migration schema definitions missing")
+    descriptor_schema = definitions.get("profileDescriptor")
+    if not isinstance(descriptor_schema, dict):
+        raise LatticeValidationError("migration profile descriptor schema missing")
+    variants = descriptor_schema.get("oneOf")
+    if not isinstance(variants, list) or len(variants) != 1:
+        raise LatticeValidationError("migration schema must enumerate supported profile descriptors")
+    variant = variants[0]
+    if not isinstance(variant, dict) or not isinstance(variant.get("properties"), dict):
+        raise LatticeValidationError("migration supported profile descriptor invalid")
+    supported = variant["properties"]
+    if supported.get("profile_id", {}).get("const") != PROFILE_ID:
+        raise LatticeValidationError("migration schema supported profile id drift")
+    if supported.get("profile_fingerprint", {}).get("const") != profile_fingerprint():
+        raise LatticeValidationError("migration schema supported profile fingerprint drift")
+
+    properties = schema.get("properties")
+    if not isinstance(properties, dict):
+        raise LatticeValidationError("migration schema properties missing")
+    mappings_schema = properties.get("mappings")
+    if not isinstance(mappings_schema, dict):
+        raise LatticeValidationError("migration mappings schema missing")
+    if mappings_schema.get("maxItems") != MAX_MIGRATION_MAPPINGS:
+        raise LatticeValidationError("migration mapping limit drift")
 
     migration = load_json(migration_fixture)
     migration_report = validate_migration_manifest(migration)
