@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qsol.example/schema/lattice-migration.schema.json",
+  "title": "QSOL LATTICE Migration Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "protocol",
+    "migration_id",
+    "source_profile",
+    "target_profile",
+    "mode",
+    "preserve_source_identity",
+    "mappings",
+    "metadata"
+  ],
+  "$defs": {
+    "profileDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["protocol", "profile_id", "profile_fingerprint"],
+      "properties": {
+        "protocol": {"const": "qsol-lattice-profile-descriptor/1"},
+        "profile_id": {"type": "string"},
+        "profile_fingerprint": {"type": "string"},
+        "metadata": {"type": "object"}
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "profile_id": {"const": "qsol-3x3x3-sierpinski-derived-memory/1"},
+            "profile_fingerprint": {"const": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf"}
+          }
+        }
+      ]
+    },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_address", "target_address"],
+      "properties": {
+        "source_address": {
+          "type": "string",
+          "pattern": "^L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}$",
+          "maxLength": 71
+        },
+        "target_address": {
+          "type": "string",
+          "pattern": "^L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}$",
+          "maxLength": 71
+        }
+      }
+    }
+  },
+  "properties": {
+    "protocol": {"const": "qsol-lattice-migration/1"},
+    "migration_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "source_profile": {"$ref": "#/$defs/profileDescriptor"},
+    "target_profile": {"$ref": "#/$defs/profileDescriptor"},
+    "mode": {"enum": ["identity", "explicit-map"]},
+    "preserve_source_identity": {"const": true},
+    "mappings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/mapping"},
+      "maxItems": 10000
+    },
+    "metadata": {"type": "object"}
+  }
+}

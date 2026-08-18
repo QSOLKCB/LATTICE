@@ -1,5 +1,12 @@
 """QSOL LATTICE reference package."""
 
+from .adapters import (
+    ARK_RECOVERY_PROTOCOL,
+    CONTROL_ADAPTER_PROTOCOL,
+    qsol_ark_recovery_manifest,
+    qsol_corpus_address_reference,
+    validate_qsol_control_contract,
+)
 from .conformance import (
     CONFORMANCE_PROTOCOL,
     conformance_payload,
@@ -28,15 +35,31 @@ from .core import (
     phi_stride_cells,
     traversal_cells,
 )
+from .migration import (
+    MIGRATED_REFERENCE_PROTOCOL,
+    MIGRATION_PROTOCOL,
+    PROFILE_DESCRIPTOR_PROTOCOL,
+    current_profile_descriptor,
+    migrate_reference,
+    profile_family_and_major,
+    reference_identity,
+    validate_migration_manifest,
+    validate_profile_descriptor,
+)
 
 __all__ = [
     "ADDRESS_PATTERN",
+    "ARK_RECOVERY_PROTOCOL",
     "CONFORMANCE_PROTOCOL",
+    "CONTROL_ADAPTER_PROTOCOL",
     "LEXICOGRAPHIC_TRAVERSAL",
     "MAX_ADDRESS_LENGTH",
     "MAX_RECURSIVE_DEPTH",
+    "MIGRATED_REFERENCE_PROTOCOL",
+    "MIGRATION_PROTOCOL",
     "PHI_STRIDE",
     "PHI_STRIDE_TRAVERSAL",
+    "PROFILE_DESCRIPTOR_PROTOCOL",
     "PROFILE_ID",
     "SEGMENT_PATTERN",
     "LatticeError",
@@ -46,12 +69,21 @@ __all__ = [
     "address_pattern",
     "conformance_payload",
     "conformance_record",
+    "current_profile_descriptor",
     "describe_address",
     "is_valid_address",
     "lexicographic_cells",
     "max_address_length",
+    "migrate_reference",
     "parse_address",
     "phi_stride_cells",
+    "profile_family_and_major",
     "profile_fingerprint",
+    "qsol_ark_recovery_manifest",
+    "qsol_corpus_address_reference",
+    "reference_identity",
     "traversal_cells",
+    "validate_migration_manifest",
+    "validate_profile_descriptor",
+    "validate_qsol_control_contract",
 ]

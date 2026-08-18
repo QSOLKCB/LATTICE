@@ -75,6 +75,33 @@ index(n) = (17 * n) mod 27
 
 Because `gcd(17,27)=1`, all 27 cells are visited exactly once before repetition. Runtime traversal uses integer arithmetic only.
 
+## Migration contract
+
+Historical address identity is always the pair:
+
+```text
+(profile_id, address)
+```
+
+Unknown profile majors fail closed. Additive descriptive metadata is compatible only when it does not change the profile ID or semantic fingerprint. Migration emits a derived target reference while retaining the complete source reference and source identity.
+
+See `docs/PROFILE-COMPATIBILITY.md`, `protocol/profile-compatibility.json`, `schema/lattice-migration.schema.json`, and `lattice/migration.py`.
+
+```text
+MIGRATION != SILENT_REWRITE
+ADDRESS_IDENTITY = PROFILE_ID + ADDRESS
+```
+
+## Consumer adapters
+
+`lattice/adapters.py` provides narrow adapters for:
+
+- QSOL-CONTROL lattice-contract conformance;
+- QSOL-CORPUS immutable `record_id` to payload-free LATTICE reference projection;
+- QSOL-ARK recovery indexing manifests with recovery authority left in ARK.
+
+The frozen language-neutral fixture is `conformance/consumer-adapters-v1.json`.
+
 ## Hard boundaries
 
 ```text
@@ -85,11 +112,14 @@ STORED != TRUE
 MEMORY != EVIDENCE
 TRAVERSAL != PHYSICAL_LAW
 LATTICE_REFERENCE != CONTENT_ID
+PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY
+CONTROL_ADAPTER != CONTROL_PAYLOAD_CODEC
+ARK_RECOVERY_AUTHORITY != LATTICE_AUTHORITY
 ```
 
 "Sierpinski-derived" is a design/profile name. This repository does not claim the memory structure is a literal physical fractal, cognitive anatomy, or empirical model of the universe.
 
-## Reference implementation
+## Reference implementations
 
 Python 3.11+, standard library only:
 
@@ -102,10 +132,19 @@ print(address_for_roles("response", "derived", "current"))
 print(phi_stride_cells()[:3])
 ```
 
+A dependency-free Node.js implementation independently regenerates the canonical conformance vector and SHA-256 profile fingerprint:
+
+```bash
+node implementations/javascript/verify_conformance.js
+```
+
 Validation:
 
 ```bash
+python3 tools/quality_gate.py
 python3 tools/validate_lattice.py
+python3 tools/validate_integrations.py
+node implementations/javascript/verify_conformance.js
 python3 -m unittest discover -s tests -v
 ```
 

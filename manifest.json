@@ -1,8 +1,8 @@
 {
   "type": "qsol-lattice-manifest",
   "protocol": "QSOL-LATTICE/0.1",
-  "schema_version": "0.2.0",
-  "snapshot_date": "2026-08-18",
+  "schema_version": "0.3.0",
+  "snapshot_date": "2026-08-19",
   "role": "logical-memory-structure",
   "verb": "REMEMBERS",
   "authority": "storage-only",
@@ -12,9 +12,17 @@
   "roadmap": "ROADMAP.md",
   "security": "SECURITY.md",
   "profile_contract": "protocol/lattice-profile.json",
+  "profile_compatibility_contract": "protocol/profile-compatibility.json",
   "reference_runtime": "lattice/core.py",
   "conformance_runtime": "lattice/conformance.py",
+  "migration_runtime": "lattice/migration.py",
+  "adapter_runtime": "lattice/adapters.py",
   "conformance_fixture": "conformance/profile-v1.json",
+  "consumer_conformance_fixture": "conformance/consumer-adapters-v1.json",
+  "migration_schema": "schema/lattice-migration.schema.json",
+  "migration_fixture": "examples/migration.valid.json",
+  "javascript_reference": "implementations/javascript/lattice.js",
+  "javascript_conformance_command": "node implementations/javascript/verify_conformance.js",
   "profile": "qsol-3x3x3-sierpinski-derived-memory/1",
   "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf",
   "top_level_cells": 27,
@@ -26,13 +34,27 @@
     "qsol.lexicographic-27/1",
     "qsol.phi-stride-27/1"
   ],
+  "compatibility": {
+    "unknown_major": "reject",
+    "additive_non_semantic_metadata": "compatible",
+    "historical_address_identity": "profile_id+address",
+    "silent_reinterpretation": false
+  },
+  "consumer_adapters": {
+    "QSOL-CONTROL": "contract-conformance-only",
+    "QSOL-CORPUS": "immutable-record-id-to-address-reference",
+    "QSOL-ARK": "recovery-manifest-indexing-only"
+  },
   "schemas": {
-    "address_reference": "schema/lattice-reference.schema.json"
+    "address_reference": "schema/lattice-reference.schema.json",
+    "migration_manifest": "schema/lattice-migration.schema.json"
   },
   "schema_examples": {
     "valid": "examples/lattice-reference.valid.json",
     "invalid": "examples/lattice-reference.invalid.json",
-    "adversarial_addresses": "examples/address-adversarial.json"
+    "adversarial_addresses": "examples/address-adversarial.json",
+    "migration_valid": "examples/migration.valid.json",
+    "migration_unknown_major_invalid": "examples/migration.unknown-major.invalid.json"
   },
   "json_schema": {
     "draft": "https://json-schema.org/draft/2020-12/schema",
@@ -41,8 +63,10 @@
   "validation": {
     "python_minimum": "3.11",
     "command": "python3 tools/validate_lattice.py",
+    "integration_command": "python3 tools/validate_integrations.py",
     "quality_command": "python3 tools/quality_gate.py",
     "test_command": "python3 -m unittest discover -s tests -v",
+    "javascript_command": "node implementations/javascript/verify_conformance.js",
     "workflow": ".github/workflows/validate.yml"
   },
   "related_repositories": {

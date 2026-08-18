@@ -1,0 +1,20 @@
+{
+  "protocol": "qsol-lattice-migration/1",
+  "migration_id": "unknown-major-must-fail",
+  "source_profile": {
+    "protocol": "qsol-lattice-profile-descriptor/1",
+    "profile_id": "qsol-3x3x3-sierpinski-derived-memory/1",
+    "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf"
+  },
+  "target_profile": {
+    "protocol": "qsol-lattice-profile-descriptor/1",
+    "profile_id": "qsol-3x3x3-sierpinski-derived-memory/2",
+    "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf"
+  },
+  "mode": "identity",
+  "preserve_source_identity": true,
+  "mappings": [],
+  "metadata": {
+    "expected_error": "unsupported profile major"
+  }
+}

@@ -9,7 +9,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 PYTHON_ROOTS = ("lattice", "tools", "tests")
-PARSER_FILES = {Path("lattice/core.py"), Path("tools/validate_lattice.py")}
+PARSER_FILES = {
+    Path("lattice/core.py"),
+    Path("lattice/migration.py"),
+    Path("lattice/adapters.py"),
+    Path("tools/validate_lattice.py"),
+    Path("tools/validate_integrations.py"),
+}
 FORBIDDEN_CALLS = {"eval", "exec"}
 
 
