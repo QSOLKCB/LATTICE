@@ -1,5 +1,18 @@
 #!/usr/bin/env python3
-"""Canonical LATTICE conformance vector and compact fingerprint."""
+"""Canonical LATTICE conformance vector and compact fingerprint.
+
+Fingerprint serialization is intentionally language-neutral and byte-pinned:
+- hash only ``conformance_payload()`` (never the fingerprint field itself);
+- sort object keys lexicographically;
+- use compact JSON separators `,` and `:` with no insignificant whitespace;
+- emit Unicode directly rather than ASCII escape sequences;
+- reject NaN/Infinity;
+- encode the resulting JSON text as UTF-8 with no terminal newline;
+- apply SHA-256 and prefix the lowercase hex digest with ``sha256:``.
+
+The exact byte recipe is regression-tested so non-Python implementations can
+use the fixture as a cross-language compatibility vector.
+"""
 
 from __future__ import annotations
 
@@ -23,6 +36,7 @@ CONFORMANCE_PROTOCOL = "qsol-lattice-conformance/1"
 
 
 def canonical_json_bytes(value: Any) -> bytes:
+    """Serialize one value with the pinned LATTICE fingerprint JSON recipe."""
     return json.dumps(
         value,
         sort_keys=True,
