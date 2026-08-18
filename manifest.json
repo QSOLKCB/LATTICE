@@ -1,7 +1,7 @@
 {
   "type": "qsol-lattice-manifest",
   "protocol": "QSOL-LATTICE/0.1",
-  "schema_version": "0.3.0",
+  "schema_version": "0.4.0",
   "snapshot_date": "2026-08-19",
   "role": "logical-memory-structure",
   "verb": "REMEMBERS",
@@ -23,6 +23,14 @@
   "migration_fixture": "examples/migration.valid.json",
   "javascript_reference": "implementations/javascript/lattice.js",
   "javascript_conformance_command": "node implementations/javascript/verify_conformance.js",
+  "rust_reference": "implementations/rust/lattice.rs",
+  "rust_toolchain": "1.96.1",
+  "rust_conformance_command": "python3 tools/verify_rust_conformance.py",
+  "lean_specification": "implementations/lean/Lattice.lean",
+  "lean_toolchain_file": "lean-toolchain",
+  "lean_toolchain": "leanprover/lean4:v4.30.0",
+  "lean_verification_command": "lean implementations/lean/Lattice.lean",
+  "formal_invariants": "docs/FORMAL-INVARIANTS.md",
   "profile": "qsol-3x3x3-sierpinski-derived-memory/1",
   "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf",
   "top_level_cells": 27,
@@ -44,6 +52,11 @@
     "QSOL-CONTROL": "contract-conformance-only",
     "QSOL-CORPUS": "immutable-record-id-to-address-reference",
     "QSOL-ARK": "recovery-manifest-indexing-only"
+  },
+  "additional_implementations": {
+    "javascript": "conformance-reference",
+    "rust": "stdlib-only-conformance-reference",
+    "lean": "traversal-invariant-specification"
   },
   "schemas": {
     "address_reference": "schema/lattice-reference.schema.json",
@@ -67,6 +80,8 @@
     "quality_command": "python3 tools/quality_gate.py",
     "test_command": "python3 -m unittest discover -s tests -v",
     "javascript_command": "node implementations/javascript/verify_conformance.js",
+    "rust_command": "python3 tools/verify_rust_conformance.py",
+    "lean_command": "lean implementations/lean/Lattice.lean",
     "workflow": ".github/workflows/validate.yml"
   },
   "related_repositories": {

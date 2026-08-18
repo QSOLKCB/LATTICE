@@ -15,6 +15,13 @@
   "consumer_conformance_fixture": "conformance/consumer-adapters-v1.json",
   "javascript_reference": "implementations/javascript/lattice.js",
   "javascript_conformance_command": "node implementations/javascript/verify_conformance.js",
+  "rust_reference": "implementations/rust/lattice.rs",
+  "rust_toolchain": "1.96.1",
+  "rust_conformance_command": "python3 tools/verify_rust_conformance.py",
+  "lean_specification": "implementations/lean/Lattice.lean",
+  "lean_toolchain": "leanprover/lean4:v4.30.0",
+  "lean_verification_command": "lean implementations/lean/Lattice.lean",
+  "formal_invariants": "docs/FORMAL-INVARIANTS.md",
   "top_level_cells": 27,
   "fingerprint_serialization": {
     "input": "conformance_payload_without_fingerprint",
@@ -44,6 +51,13 @@
       "rule": "cell_index(n)=(17*n) mod 27"
     }
   },
+  "formal_proofs": {
+    "phi_stride_coprime": "Nat.gcd 17 27 = 1",
+    "phi_order_length": 27,
+    "phi_order_nodup": true,
+    "phi_order_exact": true,
+    "scope": "traversal-only"
+  },
   "compatibility": {
     "unknown_major": "reject",
     "same_profile_same_fingerprint": "compatible",
@@ -57,6 +71,7 @@
     "QSOL-CORPUS": "map immutable record_id to content_ref plus explicit lattice address",
     "QSOL-ARK": "build recovery indexing manifest while leaving recovery authority in ARK"
   },
+  "roadmap_status": "complete",
   "boundaries": [
     "GEOMETRY != TRUTH",
     "POSITION != IMPORTANCE",
@@ -71,6 +86,7 @@
     "MIGRATION != SILENT_REWRITE",
     "ADDRESS_IDENTITY = PROFILE_ID + ADDRESS",
     "CONTROL_ADAPTER != CONTROL_PAYLOAD_CODEC",
-    "ARK_RECOVERY_AUTHORITY != LATTICE_AUTHORITY"
+    "ARK_RECOVERY_AUTHORITY != LATTICE_AUTHORITY",
+    "THEOREM_ABOUT_TRAVERSAL != THEOREM_ABOUT_TRUTH"
   ]
 }

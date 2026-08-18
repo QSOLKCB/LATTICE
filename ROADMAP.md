@@ -55,12 +55,20 @@ Adapters are deliberately thin. They do not import CONTROL payload codecs, CORPU
 ## Phase 4 — Additional implementations
 
 - [x] JavaScript reference implementation.
-- [ ] Rust reference implementation if useful.
-- [ ] Lean specification only if it proves a real invariant rather than decorating the repo with theorem-prover confetti.
+- [x] Rust reference implementation.
+- [x] Lean specification proving a real traversal invariant.
 
-The JavaScript implementation independently regenerates and hashes the canonical conformance vector in CI. Rust is deferred until a second systems-language implementation provides a concrete deployment or assurance benefit. Lean is deferred until there is a nontrivial invariant that the existing deterministic tests and cross-language fixture do not already cover.
+The JavaScript implementation independently regenerates and hashes the canonical conformance vector. The Rust implementation independently regenerates the same profile/traversal/address semantics and SHA-256 fingerprint using only the Rust standard library, then emits a record compared against the frozen fixture in CI.
+
+The Lean specification is deliberately narrow: it proves that the fixed `17 mod 27` traversal is coprime, has length 27, contains no duplicate indices, and reduces to the exact published index order. It does not formalize cognitive, physical, epistemic, or biological claims. See `docs/FORMAL-INVARIANTS.md`.
+
+## Roadmap completion state
+
+All implementation phases in this roadmap are complete. Future changes are maintenance or explicitly versioned extensions, not silent reinterpretations of v1 semantics.
 
 ## Deferred / prohibited-by-default
+
+These are enduring scope boundaries, not unfinished roadmap tasks:
 
 - literal cognitive-coordinate claims;
 - truth scoring by lattice position;
