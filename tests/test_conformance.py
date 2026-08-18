@@ -2,7 +2,7 @@ import json
 import unittest
 from pathlib import Path
 
-from lattice.conformance import conformance_record, profile_fingerprint
+from lattice.conformance import canonical_json_bytes, conformance_record, profile_fingerprint
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "conformance" / "profile-v1.json"
@@ -16,6 +16,12 @@ class ConformanceTests(unittest.TestCase):
 
     def test_profile_fingerprint_is_pinned(self):
         self.assertEqual(profile_fingerprint(), EXPECTED)
+
+    def test_canonical_json_bytes_recipe_is_pinned(self):
+        self.assertEqual(
+            canonical_json_bytes({"z": 2, "a": "φ", "nested": {"b": 1, "a": 0}}),
+            b'{"a":"\xcf\x86","nested":{"a":0,"b":1},"z":2}',
+        )
 
     def test_fixture_has_two_27_cell_bijections(self):
         fixture = json.loads(FIXTURE.read_text(encoding="utf-8"))
