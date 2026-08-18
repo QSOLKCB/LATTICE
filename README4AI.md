@@ -4,6 +4,8 @@
   "verb": "REMEMBERS",
   "authority": "storage-only",
   "profile": "qsol-3x3x3-sierpinski-derived-memory/1",
+  "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf",
+  "conformance_fixture": "conformance/profile-v1.json",
   "top_level_cell_count": 27,
   "literal_geometric_claim": false,
   "address_grammar": "L[x,y,z](/L[x,y,z])*",
@@ -31,6 +33,8 @@
     "MEMORY != EVIDENCE",
     "TRAVERSAL != PHYSICAL_LAW",
     "LATTICE_REFERENCE != CONTENT_ID",
-    "LATTICE_REFERENCE != PAYLOAD"
+    "LATTICE_REFERENCE != PAYLOAD",
+    "FINGERPRINT_MATCH != TRUTH",
+    "PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY"
   ]
 }
