@@ -1,7 +1,7 @@
 {
   "type": "qsol-lattice-manifest",
   "protocol": "QSOL-LATTICE/0.1",
-  "schema_version": "0.1.0",
+  "schema_version": "0.2.0",
   "snapshot_date": "2026-08-18",
   "role": "logical-memory-structure",
   "verb": "REMEMBERS",
@@ -13,7 +13,10 @@
   "security": "SECURITY.md",
   "profile_contract": "protocol/lattice-profile.json",
   "reference_runtime": "lattice/core.py",
+  "conformance_runtime": "lattice/conformance.py",
+  "conformance_fixture": "conformance/profile-v1.json",
   "profile": "qsol-3x3x3-sierpinski-derived-memory/1",
+  "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf",
   "top_level_cells": 27,
   "max_recursive_depth": 8,
   "max_address_length": 71,
@@ -44,6 +47,7 @@
   },
   "related_repositories": {
     "QSOL-CONTROL": "OPERATES",
+    "QSOL-CONTEXT": "CURATES PRIVATE WORKING CONTINUITY",
     "QSOL-CORPUS": "PRESERVES INTERACTION CORPUS",
     "QSOL-ARK": "SURVIVES"
   }

@@ -4,7 +4,20 @@
   "verb": "REMEMBERS",
   "authority": "storage-only",
   "profile": "qsol-3x3x3-sierpinski-derived-memory/1",
-  "top_level_cell_count": 27,
+  "profile_fingerprint": "sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf",
+  "conformance_fixture": "conformance/profile-v1.json",
+  "conformance_runtime": "lattice/conformance.py",
+  "top_level_cells": 27,
+  "fingerprint_serialization": {
+    "input": "conformance_payload_without_fingerprint",
+    "encoding": "UTF-8",
+    "object_key_order": "lexicographic sort_keys=true",
+    "separators": [",", ":"],
+    "ensure_ascii": false,
+    "allow_nan": false,
+    "terminal_newline": false,
+    "hash": "SHA-256"
+  },
   "literal_geometric_claim": false,
   "address_grammar": "L[x,y,z](/L[x,y,z])*",
   "address_pattern": "L\\[[0-2],[0-2],[0-2]\\](?:/L\\[[0-2],[0-2],[0-2]\\]){0,7}",
@@ -31,6 +44,8 @@
     "MEMORY != EVIDENCE",
     "TRAVERSAL != PHYSICAL_LAW",
     "LATTICE_REFERENCE != CONTENT_ID",
-    "LATTICE_REFERENCE != PAYLOAD"
+    "LATTICE_REFERENCE != PAYLOAD",
+    "FINGERPRINT_MATCH != TRUTH",
+    "PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY"
   ]
 }

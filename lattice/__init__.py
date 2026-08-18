@@ -1,5 +1,11 @@
 """QSOL LATTICE reference package."""
 
+from .conformance import (
+    CONFORMANCE_PROTOCOL,
+    conformance_payload,
+    conformance_record,
+    profile_fingerprint,
+)
 from .core import (
     ADDRESS_PATTERN,
     LEXICOGRAPHIC_TRAVERSAL,
@@ -25,6 +31,7 @@ from .core import (
 
 __all__ = [
     "ADDRESS_PATTERN",
+    "CONFORMANCE_PROTOCOL",
     "LEXICOGRAPHIC_TRAVERSAL",
     "MAX_ADDRESS_LENGTH",
     "MAX_RECURSIVE_DEPTH",
@@ -37,11 +44,14 @@ __all__ = [
     "LatticeValidationError",
     "address_for_roles",
     "address_pattern",
+    "conformance_payload",
+    "conformance_record",
     "describe_address",
     "is_valid_address",
     "lexicographic_cells",
     "max_address_length",
     "parse_address",
     "phi_stride_cells",
+    "profile_fingerprint",
     "traversal_cells",
 ]

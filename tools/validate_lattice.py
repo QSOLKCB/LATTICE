@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from lattice.conformance import conformance_record, profile_fingerprint
 from lattice.core import (
     ADDRESS_PATTERN,
     MAX_ADDRESS_LENGTH,
@@ -108,7 +109,7 @@ def validate_reference(value: dict[str, Any]) -> None:
 
 
 def validate() -> dict[str, Any]:
-    """Validate repository, profile, schema, machine contract, and fixtures."""
+    """Validate repository, profile, schema, conformance, machine contract, and fixtures."""
     manifest = load_json(ROOT / "manifest.json")
     if manifest.get("protocol") != "QSOL-LATTICE/0.1":
         raise fail("manifest protocol mismatch")
@@ -144,6 +145,7 @@ def validate() -> dict[str, Any]:
         "security": manifest.get("security"),
         "profile_contract": manifest.get("profile_contract"),
         "reference_runtime": manifest.get("reference_runtime"),
+        "conformance_fixture": manifest.get("conformance_fixture"),
         "validation.workflow": validation.get("workflow"),
     }
     for field, relative in required_paths.items():
@@ -188,6 +190,16 @@ def validate() -> dict[str, Any]:
         raise fail("lexicographic traversal is not a 27-cell bijection")
     if len(phi_cells) != 27 or set(phi_cells) != set(cells):
         raise fail("phi traversal is not a 27-cell bijection")
+
+    conformance_path = require_file(manifest.get("conformance_fixture"), "conformance_fixture")
+    fixture = load_json(conformance_path)
+    runtime_record = conformance_record()
+    if fixture != runtime_record:
+        raise fail("canonical conformance fixture does not match runtime semantics")
+    if manifest.get("profile_fingerprint") != profile_fingerprint():
+        raise fail("manifest profile fingerprint drift")
+    if fixture.get("fingerprint") != manifest.get("profile_fingerprint"):
+        raise fail("conformance fixture fingerprint drift")
 
     schemas = require_mapping(manifest.get("schemas"), "manifest.schemas")
     schema_path = require_file(schemas.get("address_reference"), "schemas.address_reference")
@@ -252,6 +264,7 @@ def validate() -> dict[str, Any]:
         "protocol": manifest["protocol"],
         "status": "valid",
         "profile": PROFILE_ID,
+        "profile_fingerprint": profile_fingerprint(),
         "top_level_cells": len(cells),
         "phi_stride": PHI_STRIDE,
         "max_recursive_depth": MAX_RECURSIVE_DEPTH,

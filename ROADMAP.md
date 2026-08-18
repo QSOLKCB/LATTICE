@@ -12,11 +12,26 @@
 
 ## Phase 1 — Profile conformance vectors
 
-- [ ] Publish canonical ordered 27-cell fixture.
-- [ ] Publish phi-stride traversal fixture.
-- [ ] Publish valid/invalid recursive-address corpus.
-- [ ] Add cross-language conformance vectors.
-- [ ] Define compact profile fingerprint.
+- [x] Publish canonical ordered 27-cell fixture.
+- [x] Publish phi-stride traversal fixture.
+- [x] Publish valid/invalid/adversarial recursive-address corpus.
+- [ ] Verify the same conformance fixture from an independent non-Python implementation.
+- [x] Define compact profile fingerprint over profile/traversal/address semantics.
+- [x] Fail CI when runtime semantics, manifest fingerprint, or fixture diverge.
+
+Canonical v1 profile fingerprint:
+
+```text
+sha256:6e7c4a9a781d552a2b561d334a8435c12efe2908fcd24a0f152935aded555bcf
+```
+
+The fingerprint is compatibility evidence only:
+
+```text
+FINGERPRINT_MATCH != TRUTH
+FINGERPRINT_MATCH != PAYLOAD_IDENTITY
+PROFILE_COMPATIBILITY != EPISTEMIC_AUTHORITY
+```
 
 ## Phase 2 — Migration contract
 
@@ -31,7 +46,7 @@
 - [ ] QSOL-CONTROL adapter/conformance test.
 - [ ] QSOL-CORPUS address-reference adapter.
 - [ ] QSOL-ARK recovery manifest integration.
-- [ ] language-neutral JSON fixtures.
+- [x] Language-neutral JSON conformance fixture.
 
 ## Phase 4 — Additional implementations
 
